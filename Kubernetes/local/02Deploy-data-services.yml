@@ -1,0 +1,210 @@
+#serve-event
+apiVersion: v1
+kind: Service
+metadata:
+  name: serve-event
+  labels:
+    app: serve-event
+spec:
+  type: ClusterIP
+  selector:
+    app: serve-event
+  ports:
+  - port: 9000
+    targetPort: 9000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serve-event
+spec:
+  selector:
+    matchLabels:
+      app: serve-event
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: serve-event
+    spec:    
+      containers:
+      - name: serve-event
+        image: phphuc7989/serve_event:latest
+        env:
+          - name: REDIS_CONNECT
+            value: redis-master
+          - name: MONGODB_CONNECT
+            value: mongo
+        ports:
+        - containerPort: 9000
+      restartPolicy: Always
+---
+#serve-group
+apiVersion: v1
+kind: Service
+metadata:
+  name: serve-group
+  labels:
+    app: serve-group
+spec:
+  type: ClusterIP
+  selector:
+    app: serve-group
+  ports:
+  - port: 9006
+    targetPort: 9006
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serve-group
+spec:
+  selector:
+    matchLabels:
+      app: serve-group
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: serve-group
+    spec:    
+      containers:
+      - name: serve-group
+        image: phphuc7989/serve_group:latest
+        env:
+          - name: REDIS_CONNECT
+            value: redis-master
+          - name: MONGODB_CONNECT
+            value: mongo
+        ports:
+        - containerPort: 9006
+      restartPolicy: Always
+---
+#serve-member
+apiVersion: v1
+kind: Service
+metadata:
+  name: serve-member
+  labels:
+    app: serve-member
+spec:
+  type: ClusterIP
+  selector:
+    app: serve-member
+  ports:
+  - port: 9002
+    targetPort: 9002
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serve-member
+spec:
+  selector:
+    matchLabels:
+      app: serve-member
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: serve-member
+    spec:    
+      containers:
+      - name: serve-member
+        image: phphuc7989/serve_member:latest
+        env:
+          - name: REDIS_CONNECT
+            value: redis-master
+          - name: MONGODB_CONNECT
+            value: mongo
+        ports:
+        - containerPort: 9002
+      restartPolicy: Always
+---
+#serve-response
+apiVersion: v1
+kind: Service
+metadata:
+  name: serve-response
+  labels:
+    app: serve-response
+spec:
+  type: ClusterIP
+  selector:
+    app: serve-response
+  ports:
+  - port: 9001
+    targetPort: 9001
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serve-response
+spec:
+  selector:
+    matchLabels:
+      app: serve-response
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: serve-response
+    spec:    
+      containers:
+      - name: serve-response
+        image: phphuc7989/serve_response:latest
+        env:
+          - name: REDIS_CONNECT
+            value: redis-master
+          - name: MONGODB_CONNECT
+            value: mongo
+        ports:
+        - containerPort: 9001
+      restartPolicy: Always
+---
+#serve-venue
+apiVersion: v1
+kind: Service
+metadata:
+  name: serve-venue
+  labels:
+    app: serve-venue
+spec:
+  type: ClusterIP
+  selector:
+    app: serve-venue
+  ports:
+  - port: 9003
+    targetPort: 9003
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serve-venue
+spec:
+  selector:
+    matchLabels:
+      app: serve-venue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: serve-venue
+    spec:    
+      containers:
+      - name: serve-venue
+        image: phphuc7989/serve_venue:latest
+        env:
+          - name: REDIS_CONNECT
+            value: redis-master
+          - name: MONGODB_CONNECT
+            value: mongo
+        ports:
+        - containerPort: 9003
+      restartPolicy: Always
+---

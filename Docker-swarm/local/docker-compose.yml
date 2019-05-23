@@ -1,0 +1,346 @@
+version: '3.2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - kafka-data:/var/lib/zookeeper/data
+    networks:
+      - backend
+
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - backend
+# collect data
+  mainproducer:
+    image: phphuc7989/mainproducer:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:29092
+    depends_on:
+      - zookeeper
+      - kafka
+    networks:
+      - backend
+
+  mainconsumer:
+    image: phphuc7989/mainconsumer:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:29092
+    depends_on:
+      - zookeeper
+      - kafka
+    networks:
+      - backend
+
+  collectevent:
+    image: phphuc7989/collectevent:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:29092
+      MONGODB_CONNECT: mongo
+    depends_on:
+      - zookeeper
+      - kafka
+      - mongodb
+    networks:
+      - backend
+
+  collectgroup:
+    image: phphuc7989/collectgroup:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:29092
+      MONGODB_CONNECT: mongo
+    depends_on:
+      - zookeeper
+      - kafka
+      - mongodb
+    networks:
+      - backend
+
+  collectmember:
+    image: phphuc7989/collectmember:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:29092
+      MONGODB_CONNECT: mongo
+    depends_on:
+      - zookeeper
+      - kafka
+      - mongodb
+    networks:
+      - backend
+
+  collectresponse:
+    image: phphuc7989/collectresponse:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:29092
+      MONGODB_CONNECT: mongo
+    depends_on:
+      - zookeeper
+      - kafka
+      - mongodb
+    networks:
+      - backend
+
+  collectvenue:
+    image: phphuc7989/collectvenue:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:29092
+      MONGODB_CONNECT: mongo
+    depends_on:
+      - zookeeper
+      - kafka
+      - mongodb
+    networks:
+      - backend
+# serve data
+  serve_event:
+    image: phphuc7989/serve_event:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      MONGODB_CONNECT: mongo
+      REDIS_CONNECT: redis
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+  serve_group:
+    image: phphuc7989/serve_group:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      MONGODB_CONNECT: mongo
+      REDIS_CONNECT: redis
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+  serve_member:
+    image: phphuc7989/serve_member:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      MONGODB_CONNECT: mongo
+      REDIS_CONNECT: redis
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+  serve_response:
+    image: phphuc7989/serve_response:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      MONGODB_CONNECT: mongo
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+  serve_venue:
+    image: phphuc7989/serve_venue:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    environment:
+      MONGODB_CONNECT: mongo
+      REDIS_CONNECT: redis
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+# gateway
+  rsvp-gateway: #nginx load balancer to expose the outer world
+    image: phphuc7989/gatewaylb:latest #load balancer
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    networks:
+      - frontend
+    ports:
+      - target: 4000
+        published: 4000
+        protocol: tcp
+        mode: host
+  rsvp-gateway-internal:
+    image: phphuc7989/rsvp-gateway:latest
+    deploy:
+      mode: replicated
+      replicas: 5
+      resources:
+        limits:
+          cpus: "1"
+          memory: 500M
+      restart_policy:
+        condition: on-failure
+    networks:
+      - backend
+      - frontend
+    environment:
+      - AAAAAA=AAAAAA
+# an ngnix server to host static resource, stay here just to consume data in same host.
+  rsvp-react-client:
+    image: phphuc7989/rsvp-react-client:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - rsvp-gateway
+    networks:
+      - frontend
+    ports:
+      - target: 80 #map port 80 on container to port 80 on host
+        published: 80
+        protocol: tcp
+        mode: host
+# db
+  redis:
+    image: redis:latest
+    networks:
+      - backend
+  mongo:
+    image: mongo
+    volumes:
+      - db-data:/data/db
+    networks:
+      - backend
+    ports:
+      - target: 27017
+        published: 27018
+        protocol: tcp
+        mode: host
+networks:
+  backend:
+  frontend:
+
+volumes:
+  db-data:
+  kafka-data:
