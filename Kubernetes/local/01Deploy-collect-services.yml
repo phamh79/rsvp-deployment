@@ -16,6 +16,10 @@ spec:
       containers:
       - name: mainproducer
         image: phphuc7989/mainproducer:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: KAFKA_BROKER_CONNECT
             value: kafka1:9092
@@ -39,6 +43,10 @@ spec:
       containers:
       - name: mainconsumer
         image: phphuc7989/mainconsumer:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: KAFKA_BROKER_CONNECT
             value: kafka1:9092
@@ -62,6 +70,10 @@ spec:
       containers:
       - name: collectevent
         image: phphuc7989/collectevent:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: KAFKA_BROKER_CONNECT
             value: kafka1:9092
@@ -87,6 +99,10 @@ spec:
       containers:
       - name: collectgroup
         image: phphuc7989/collectgroup:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: KAFKA_BROKER_CONNECT
             value: kafka1:9092
@@ -112,6 +128,10 @@ spec:
       containers:
       - name: collectmember
         image: phphuc7989/collectmember:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: KAFKA_BROKER_CONNECT
             value: kafka1:9092
@@ -137,6 +157,10 @@ spec:
       containers:
       - name: collectresponse
         image: phphuc7989/collectresponse:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: KAFKA_BROKER_CONNECT
             value: kafka1:9092
@@ -162,6 +186,10 @@ spec:
       containers:
       - name: collectvenue
         image: phphuc7989/collectvenue:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: KAFKA_BROKER_CONNECT
             value: kafka1:9092

@@ -31,6 +31,10 @@ spec:
       containers:
       - name: serve-event
         image: phphuc7989/serve_event:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: REDIS_CONNECT
             value: redis-master
@@ -73,6 +77,10 @@ spec:
       containers:
       - name: serve-group
         image: phphuc7989/serve_group:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: REDIS_CONNECT
             value: redis-master
@@ -115,6 +123,10 @@ spec:
       containers:
       - name: serve-member
         image: phphuc7989/serve_member:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: REDIS_CONNECT
             value: redis-master
@@ -157,6 +169,10 @@ spec:
       containers:
       - name: serve-response
         image: phphuc7989/serve_response:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: REDIS_CONNECT
             value: redis-master
@@ -199,6 +215,10 @@ spec:
       containers:
       - name: serve-venue
         image: phphuc7989/serve_venue:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
         env:
           - name: REDIS_CONNECT
             value: redis-master

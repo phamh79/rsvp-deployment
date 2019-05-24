@@ -29,6 +29,10 @@ spec:
       containers:
       - name: rsvp-gateway
         image: phphuc7989/rsvp-gateway:latest
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
         env:
           - name: REDIS_CONNECT
             value: redis-master
