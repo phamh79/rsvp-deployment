@@ -1,0 +1,199 @@
+#main producer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mainproducer
+spec:
+  selector:
+    matchLabels:
+      app: mainproducer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mainproducer
+    spec:    
+      containers:
+      - name: mainproducer
+        image: phphuc7989/mainproducer:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_CONNECT
+            value: kafka1:9092
+      restartPolicy: Always
+---
+#main consumer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mainconsumer
+spec:
+  selector:
+    matchLabels:
+      app: mainconsumer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mainconsumer
+    spec:    
+      containers:
+      - name: mainconsumer
+        image: phphuc7989/mainconsumer:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_CONNECT
+            value: kafka1:9092
+      restartPolicy: Always
+---
+#collectevent
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collectevent
+spec:
+  selector:
+    matchLabels:
+      app: collectevent
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: collectevent
+    spec:    
+      containers:
+      - name: collectevent
+        image: phphuc7989/collectevent:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_CONNECT
+            value: kafka1:9092
+          - name: MONGODB_CONNECT
+            value: mongo
+      restartPolicy: Always
+---
+#collectgroup
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collectgroup
+spec:
+  selector:
+    matchLabels:
+      app: collectgroup
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: collectgroup
+    spec:    
+      containers:
+      - name: collectgroup
+        image: phphuc7989/collectgroup:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_CONNECT
+            value: kafka1:9092
+          - name: MONGODB_CONNECT
+            value: mongo
+      restartPolicy: Always
+---
+#collectmember
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collectmember
+spec:
+  selector:
+    matchLabels:
+      app: collectmember
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: collectmember
+    spec:    
+      containers:
+      - name: collectmember
+        image: phphuc7989/collectmember:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_CONNECT
+            value: kafka1:9092
+          - name: MONGODB_CONNECT
+            value: mongo
+      restartPolicy: Always
+---
+#collectresponse
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collectresponse
+spec:
+  selector:
+    matchLabels:
+      app: collectresponse
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: collectresponse
+    spec:    
+      containers:
+      - name: collectresponse
+        image: phphuc7989/collectresponse:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_CONNECT
+            value: kafka1:9092
+          - name: MONGODB_CONNECT
+            value: mongo
+      restartPolicy: Always
+---
+#collectvenue
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collectvenue
+spec:
+  selector:
+    matchLabels:
+      app: collectvenue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: collectvenue
+    spec:    
+      containers:
+      - name: collectvenue
+        image: phphuc7989/collectvenue:latest
+        resources:
+          limits:
+            cpu: '50m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_CONNECT
+            value: kafka1:9092
+          - name: MONGODB_CONNECT
+            value: mongo
+      restartPolicy: Always
+---

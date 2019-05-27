@@ -1,0 +1,206 @@
+#mongo
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      volumes:
+      - name: datadir
+      containers:
+      - name: mongo
+        image: mongo
+        resources:
+          limits:
+            cpu: '100m'
+            memory: '128Mi'
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: datadir
+          mountPath: /data/db
+---
+#Zoo Keeper
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  labels:
+    app: zookeeper
+spec:
+  type: ClusterIP
+  selector:
+    app: zookeeper
+  ports:
+  - port: 2181
+    targetPort: 2181
+    protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+  labels:
+    app: zookeeper  
+spec:
+  selector:
+    matchLabels:
+      app: zookeeper
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      volumes:
+            - name: datadir
+      containers:
+      - name: zookeeper
+        image: confluentinc/cp-zookeeper:latest
+        resources:
+          limits:
+            cpu: '100m'
+            memory: '128Mi'
+        env:
+          - name: ZOOKEEPER_CLIENT_PORT
+            value: '2181'
+          - name: ZOOKEEPER_TICK_TIME
+            value: '2000'
+        ports:
+        - containerPort: 2181
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/zookeeper
+---
+#Kafka
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka1
+  labels:
+    app: kafka1
+spec:
+  type: ClusterIP
+  selector:
+    app: kafka1
+  ports:
+  - port: 9092
+    targetPort: 9092
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka1
+  name: kafka1
+spec:
+  selector:
+    matchLabels:
+      app: kafka1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kafka1
+    spec:
+      volumes:
+          - name: datadir
+      containers:
+      - name: kafka1
+        image: confluentinc/cp-kafka:latest
+        resources:
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        env:
+          - name: KAFKA_BROKER_ID
+            value: "1"
+          - name: KAFKA_ZOOKEEPER_CONNECT
+            value: "zookeeper:2181"
+          - name: KAFKA_ADVERTISED_LISTENERS
+            value: PLAINTEXT://kafka1:9092
+          - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+            value: PLAINTEXT:PLAINTEXT
+          - name: KAFKA_INTER_BROKER_LISTENER_NAME
+            value: PLAINTEXT
+          - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+            value: '1'
+        ports:
+        - containerPort: 9092
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/kafka/data 
+      hostname: kafka1
+      restartPolicy: Always
+---
+#https://kubernetes.io/docs/tutorials/stateless-application/guestbook/#start-up-the-redis-master
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+    role: master
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    role: master
+    tier: backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      role: master
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master
+        image: k8s.gcr.io/redis:e2e
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
