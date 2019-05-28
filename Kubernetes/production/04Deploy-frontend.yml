@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: rsvp-react-client
-        image: phphuc7989/rsvp-react-client:latest
+        image: phphuc7989/rsvp-react-client:prod
         resources:
           limits:
             cpu: '10m'

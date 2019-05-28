@@ -2,12 +2,12 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: phpppd-ingress
-  annotations:
-    kubernetes.io/ingress.class: nginx
 spec:
+    backend:
+      serviceName: rsvp-react-client
+      servicePort: 80
     rules:
-    - host: phpppd.net
-      http:
+     - http:
         paths:
         - path: /graphql
           backend:

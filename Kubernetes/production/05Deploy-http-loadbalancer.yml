@@ -2,10 +2,11 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: phpppd-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: phpppd-ip
 spec:
     rules:
-    - host: phpppd.net
-      http:
+    - http:
         paths:
         - path: /graphql
           backend:
